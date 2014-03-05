@@ -1,5 +1,6 @@
 <?php
 
+
 return new \Phalcon\Config(array(
 
    'session' => array(
@@ -9,7 +10,7 @@ return new \Phalcon\Config(array(
             'expires'       => '8600',
             'prefix'        => 'gis',
     ),
-   
+
 	'database' => array(
                 'adapter'     => 'Postgresql',
                 'host'        => '127.0.0.1',
