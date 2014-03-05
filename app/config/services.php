@@ -39,7 +39,7 @@ $di->set('url', function() use ($config) {
 }, true);
 
 /**
- * Setting up the view component with hierachychal model
+ * Setting up the view component
  */
 $di->set('view', function() use ($config) {
 
