@@ -5,9 +5,9 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="shortcut icon" href="images/favicon.png">
-    <base href="{{ url("") }}" />
+    <base href="<?php echo $this->url->get(''); ?>" />
 
-    <title>{{ title }}</title>
+    <title><?php echo $title; ?></title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
