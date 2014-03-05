@@ -2,7 +2,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="docs-assets/js/jquery-1.10.2.min.js"></script>
-    <script src="dist/js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="docs-assets/js/application.js"></script>
     <script src="assets/owl-carousel/owl.carousel.js"></script>
 
