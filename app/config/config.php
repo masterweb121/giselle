@@ -42,7 +42,7 @@ return new \Phalcon\Config(array(
 
 		'lifetime' => array('padView' => 5)
 	),
-		
+
 	'mail' => array(
 		'fromName' => 'Gis App',
 		'fromEmail' => 'innermond@yahoo.com',
