@@ -39,7 +39,7 @@ $di->set('url', function() use ($config) {
 }, true);
 
 /**
- * Setting up the view component
+ * Setting up the view component with hierachy
  */
 $di->set('view', function() use ($config) {
 
