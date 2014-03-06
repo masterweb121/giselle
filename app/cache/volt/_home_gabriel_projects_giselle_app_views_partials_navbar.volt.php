@@ -10,26 +10,21 @@
           </button>
           <a class="navbar-brand logo" href="#"><img src="images/logo.png" alt="werhatoffen"></a>
           <div class="btn-group city-select">
-            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">München <span class="caret"></span></button>
-            <ul class="dropdown-menu blue" role="menu">
-              <li><a href="#">Berlin</a></li>
-              <li><a href="#">Hamburg</a></li>
-              <li><a href="#">München</a></li>
-              <li><a href="#">Köln</a></li>
-            </ul>
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Choose a city <span class="caret"></span></button>
+            <?php echo $this->navbar->main_cities_select(); ?>
           </div>
         </div>
 
         <div class="navbar-collapse collapse">
           <!-- Single button -->
-          <form class="form-inline findbar" role="form">
+          <form class="form-inline findbar" role="form" id="navbar-form-search">
             <div class="form-group wer">
-              <label class="sr-only" for="exampleInputEmail2">Wer</label>
-              <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Wer">
+              <label class="sr-only" for="wer">Wer</label>
+              <input type="text" class="form-control typeahead" id="wer" placeholder="Wer" autocomplete="off">
             </div>
             <div class="form-group wo">
-              <label class="sr-only" for="exampleInputPassword2">Wo</label>
-              <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Wo">
+              <label class="sr-only" for="wo">Wo</label>
+              <input type="text" class="form-control typeahead" id="wo" placeholder="Wo" autocomplete="off">
             </div>
             <button type="submit" class="btn btn-darkblue pull-right"> <span class="glyphicon glyphicon-search"></span> </button>
           </form>

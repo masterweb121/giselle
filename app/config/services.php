@@ -17,7 +17,7 @@ use Giselle\Auth\Auth,
 	Giselle\Acl\Acl,
 	Giselle\Mail\Mail,
 
-	Giselle\Helpers\Pad;
+	Giselle\NavBar;
 
 /**
  * The FactoryDefault Dependency Injector automatically register the right services providing a full stack framework
@@ -46,7 +46,7 @@ $di->set('view', function() use ($config) {
 	$view = new View();
 
 	// temporary info just to show something into the purple bar
-	$view->info = 'Hello';
+	$view->title = 'Giselle';
 
 	$view->setViewsDir($config->application->viewsDir);
 
@@ -177,22 +177,19 @@ $di->set('modelsManager', function() {
 	return new Phalcon\Mvc\Model\Manager();
 });
 
-/**
-* Etherpad instance is delivered
-*/
-$di->setShared('padClient', function() use ($config) {
-	if ( ! class_exists('Etherpad'))
-		include $config->application->vendorDir . $config->etherpad->filename;
-
-	$instance = new Etherpad($config->etherpad->apiKey,$config->etherpad->apiEndPoint);
-	return $instance;
-});
 
 /**
  * Helper Pad
  */
 $di->set('pad', function() {
 	return new Pad();
+});
+
+/**
+ * NavBar component
+ */
+$di->set('navbar', function() {
+	return new \Giselle\UI\NavBar();
 });
 
 

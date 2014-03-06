@@ -1,0 +1,107 @@
+<?php return array (
+  0 => 
+  array (
+    0 => 'id',
+    1 => 'name',
+    2 => 'description',
+    3 => 'phone',
+    4 => 'fax',
+    5 => 'email',
+    6 => 'website',
+    7 => 'contact_mode',
+    8 => 'close',
+    9 => 'chaines_id',
+    10 => 'data',
+    11 => 'streets_id',
+    12 => '_location',
+    13 => 'lat',
+    14 => 'lng',
+  ),
+  1 => 
+  array (
+    0 => 'id',
+  ),
+  2 => 
+  array (
+    0 => 'name',
+    1 => 'description',
+    2 => 'phone',
+    3 => 'fax',
+    4 => 'email',
+    5 => 'website',
+    6 => 'contact_mode',
+    7 => 'close',
+    8 => 'chaines_id',
+    9 => 'data',
+    10 => 'streets_id',
+    11 => '_location',
+    12 => 'lat',
+    13 => 'lng',
+  ),
+  3 => 
+  array (
+    0 => 'id',
+    1 => 'name',
+    2 => 'description',
+    3 => 'phone',
+    4 => 'fax',
+    5 => 'email',
+    6 => 'website',
+    7 => 'contact_mode',
+    8 => 'close',
+    9 => 'data',
+    10 => 'streets_id',
+    11 => 'lat',
+    12 => 'lng',
+  ),
+  4 => 
+  array (
+    'id' => 0,
+    'name' => 6,
+    'description' => 6,
+    'phone' => 6,
+    'fax' => 6,
+    'email' => 6,
+    'website' => 6,
+    'contact_mode' => 0,
+    'close' => 8,
+    'chaines_id' => 0,
+    'data' => 6,
+    'streets_id' => 0,
+    '_location' => 2,
+    'lat' => 2,
+    'lng' => 2,
+  ),
+  5 => 
+  array (
+    'id' => true,
+    'contact_mode' => true,
+    'chaines_id' => true,
+    'streets_id' => true,
+  ),
+  8 => 'id',
+  9 => 
+  array (
+    'id' => 1,
+    'name' => 2,
+    'description' => 2,
+    'phone' => 2,
+    'fax' => 2,
+    'email' => 2,
+    'website' => 2,
+    'contact_mode' => 1,
+    'close' => 5,
+    'chaines_id' => 1,
+    'data' => 2,
+    'streets_id' => 1,
+    '_location' => 2,
+    'lat' => 2,
+    'lng' => 2,
+  ),
+  10 => 
+  array (
+  ),
+  11 => 
+  array (
+  ),
+); 

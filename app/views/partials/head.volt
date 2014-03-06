@@ -13,6 +13,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- Werhatoffen.de Theme -->
     <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="css/typeahead.css" rel="stylesheet">
     <!-- Important Owl stylesheet -->
     <link rel="stylesheet" href="assets/owl-carousel/owl.carousel.css">
 

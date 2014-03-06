@@ -20,6 +20,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- Werhatoffen.de Theme -->
     <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="css/typeahead.css" rel="stylesheet">
     <!-- Important Owl stylesheet -->
     <link rel="stylesheet" href="assets/owl-carousel/owl.carousel.css">
 
@@ -50,26 +51,21 @@
           </button>
           <a class="navbar-brand logo" href="#"><img src="images/logo.png" alt="werhatoffen"></a>
           <div class="btn-group city-select">
-            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">München <span class="caret"></span></button>
-            <ul class="dropdown-menu blue" role="menu">
-              <li><a href="#">Berlin</a></li>
-              <li><a href="#">Hamburg</a></li>
-              <li><a href="#">München</a></li>
-              <li><a href="#">Köln</a></li>
-            </ul>
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Choose a city <span class="caret"></span></button>
+            <?php echo $this->navbar->main_cities_select(); ?>
           </div>
         </div>
 
         <div class="navbar-collapse collapse">
           <!-- Single button -->
-          <form class="form-inline findbar" role="form">
+          <form class="form-inline findbar" role="form" id="navbar-form-search">
             <div class="form-group wer">
-              <label class="sr-only" for="exampleInputEmail2">Wer</label>
-              <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Wer">
+              <label class="sr-only" for="wer">Wer</label>
+              <input type="text" class="form-control typeahead" id="wer" placeholder="Wer" autocomplete="off">
             </div>
             <div class="form-group wo">
-              <label class="sr-only" for="exampleInputPassword2">Wo</label>
-              <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Wo">
+              <label class="sr-only" for="wo">Wo</label>
+              <input type="text" class="form-control typeahead" id="wo" placeholder="Wo" autocomplete="off">
             </div>
             <button type="submit" class="btn btn-darkblue pull-right"> <span class="glyphicon glyphicon-search"></span> </button>
           </form>
@@ -821,7 +817,9 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="docs-assets/js/jquery-1.10.2.min.js"></script>
-    <script src="dist/js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+    <script src="js/typeahead.bundle.min.js"></script>
     <script src="docs-assets/js/application.js"></script>
     <script src="assets/owl-carousel/owl.carousel.js"></script>
 
@@ -874,7 +872,78 @@
      // }
 
 
-    });
+      // autocomplete Google
+      var jelem = $('#wo');
+
+      // init autocomplete
+      var elem=jelem.get(0);
+      var t={types:["geocode"],componentRestrictions:{country:"de"}};
+      var autocomplete=new google.maps.places.Autocomplete(elem,t)
+
+      // get geo data for chosen place
+      google.maps.event.addListener(autocomplete, 'place_changed', function() {
+
+          // wipe out stored geo data
+          jelem.removeData('lat')
+          jelem.removeData('lng')
+   
+          var place = autocomplete.getPlace();
+          if (!place.geometry) {
+            return;
+          }
+          // store geo data
+          jelem.data('lat', place.geometry.location.lat())
+          jelem.data('lng', place.geometry.location.lng())
+        });
+
+
+      });
+
+      // typeahead
+      var businesses = new Bloodhound({
+        datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        limit: 10,
+        remote: {
+          url: 'businesses.json?q=%QUERY',
+          // aditional data
+          replace: function(url, query) {
+            var jelem = $('#wo');
+            var lat = jelem.data('lat')
+            var lng = jelem.data('lng')
+            url = url.replace(this.wildcard, query);
+            if (!lat || !lng) return url
+            return url + '&lat=' + encodeURIComponent(lat) + '&lng=' + encodeURIComponent(lng)
+          }
+        },
+      });
+      businesses.initialize();
+
+      var TypeAhead = $('#navbar-form-search .typeahead').typeahead(null, {
+      name: 'businesses',
+      displayKey: 'name',
+      highlight: true,
+      source: businesses.ttAdapter(),
+      templates: {
+          suggestion: function(ctx){  
+            var _out = '<p>:name::distance_from:</p>'.replace(':name:', ctx.name)
+            if (ctx.hasOwnProperty('distance_from')){
+                var out = _out.replace(':distance_from:', ' <small>' + Math.abs(ctx.distance_from) + ' km</small>')
+              }else{
+                var out = _out.replace(':distance_from:', '')
+            }
+            return out;
+          }
+        }
+      });
+
+      TypeAhead.on('typeahead:autocompleted', function(evt, data){
+        var jelem = $('#wo');
+        var lat = jelem.data('lat')
+        var lng = jelem.data('lng')
+        // console.log(jelem.data('lat'))
+        // console.log(data)
+      })
     </script>
 
 	</body>
