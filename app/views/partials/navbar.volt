@@ -9,6 +9,7 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand logo" href="#"><img src="images/logo.png" alt="werhatoffen"></a>
+          <!-- <a title="Deinen Standort per GPS bestimmen" href="javascript:findLocation();"><img src="images/gps.png" border="0"></a> -->
           <div class="btn-group city-select">
             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Choose a city <span class="caret"></span></button>
             {{ this.navbar.main_cities_select() }}
@@ -27,6 +28,8 @@
               <input type="text" class="form-control typeahead" id="wo" placeholder="Wo" autocomplete="off">
             </div>
             <button type="submit" class="btn btn-darkblue pull-right"> <span class="glyphicon glyphicon-search"></span> </button>
+            <input type="hidden" id="_wer" name="_wer">
+            <input type="hidden" id="_wo" name="_wo">
           </form>
         </div><!--/.nav-collapse -->
       </div>

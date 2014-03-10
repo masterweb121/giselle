@@ -15,9 +15,7 @@ use Phalcon\DI\FactoryDefault,
 
 use Giselle\Auth\Auth,
 	Giselle\Acl\Acl,
-	Giselle\Mail\Mail,
-
-	Giselle\NavBar;
+	Giselle\Mail\Mail;
 
 /**
  * The FactoryDefault Dependency Injector automatically register the right services providing a full stack framework
@@ -190,6 +188,19 @@ $di->set('pad', function() {
  */
 $di->set('navbar', function() {
 	return new \Giselle\UI\NavBar();
+});
+/**
+ * Search component
+ */
+$di->set('searchBuilder', function() {
+	return new \Giselle\Search\Builder();
+});
+
+/**
+ * CategoriesBar component
+ */
+$di->set('categories_bar', function() {
+	return new \Giselle\UI\CategoriesBar();
 });
 
 

@@ -16,6 +16,8 @@
     12 => '_location',
     13 => 'lat',
     14 => 'lng',
+    15 => 'categories_id',
+    16 => 'categories_parent_id',
   ),
   1 => 
   array (
@@ -37,6 +39,8 @@
     11 => '_location',
     12 => 'lat',
     13 => 'lng',
+    14 => 'categories_id',
+    15 => 'categories_parent_id',
   ),
   3 => 
   array (
@@ -71,6 +75,8 @@
     '_location' => 2,
     'lat' => 2,
     'lng' => 2,
+    'categories_id' => 0,
+    'categories_parent_id' => 0,
   ),
   5 => 
   array (
@@ -78,6 +84,8 @@
     'contact_mode' => true,
     'chaines_id' => true,
     'streets_id' => true,
+    'categories_id' => true,
+    'categories_parent_id' => true,
   ),
   8 => 'id',
   9 => 
@@ -97,6 +105,8 @@
     '_location' => 2,
     'lat' => 2,
     'lng' => 2,
+    'categories_id' => 1,
+    'categories_parent_id' => 1,
   ),
   10 => 
   array (

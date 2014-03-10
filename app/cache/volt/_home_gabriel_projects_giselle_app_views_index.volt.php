@@ -50,6 +50,7 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand logo" href="#"><img src="images/logo.png" alt="werhatoffen"></a>
+          <!-- <a title="Deinen Standort per GPS bestimmen" href="javascript:findLocation();"><img src="images/gps.png" border="0"></a> -->
           <div class="btn-group city-select">
             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Choose a city <span class="caret"></span></button>
             <?php echo $this->navbar->main_cities_select(); ?>
@@ -68,6 +69,8 @@
               <input type="text" class="form-control typeahead" id="wo" placeholder="Wo" autocomplete="off">
             </div>
             <button type="submit" class="btn btn-darkblue pull-right"> <span class="glyphicon glyphicon-search"></span> </button>
+            <input type="hidden" id="_wer" name="_wer">
+            <input type="hidden" id="_wo" name="_wo">
           </form>
         </div><!--/.nav-collapse -->
       </div>
@@ -818,10 +821,10 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="docs-assets/js/jquery-1.10.2.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places"></script>
     <script src="js/typeahead.bundle.min.js"></script>
-    <script src="docs-assets/js/application.js"></script>
     <script src="assets/owl-carousel/owl.carousel.js"></script>
+    <?php echo $this->assets->outputJs(); ?>
 
     <script>
     $(document).ready(function() {
@@ -871,36 +874,75 @@
 
      // }
 
-
       // autocomplete Google
       var jelem = $('#wo');
 
+
+
       // init autocomplete
       var elem=jelem.get(0);
-      var t={types:["geocode"],componentRestrictions:{country:"de"}};
+      // geocode or street
+      var t={types:["geocode"],noClear: true, componentRestrictions:{country:"de"}};
+      // var autocomplete = null;
       var autocomplete=new google.maps.places.Autocomplete(elem,t)
-
       // get geo data for chosen place
       google.maps.event.addListener(autocomplete, 'place_changed', function() {
 
           // wipe out stored geo data
-          jelem.removeData('lat')
-          jelem.removeData('lng')
-   
+          $('#_wo').val('');
           var place = autocomplete.getPlace();
           if (!place.geometry) {
             return;
           }
           // store geo data
-          jelem.data('lat', place.geometry.location.lat())
-          jelem.data('lng', place.geometry.location.lng())
+          $('#_wo').val(JSON.stringify(
+            {'lat': place.geometry.location.lat(), 'lng': place.geometry.location.lng()}))
+
+          console.log(place.geometry.location)
+
         });
 
+      jelem.on('keydown', function(e){
+        // on enter just leave and trigger autocomplete
+        if (e.which == 13) { $(this).blur();/* e.preventDefault() */}
+      })
 
-      });
+
 
       // typeahead
-      var businesses = new Bloodhound({
+      var categories = new Bloodhound({
+        datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        limit: 10,
+        remote: {
+          url: 'categories.json?q=%QUERY',
+        },
+        prefetch: {
+          url: 'categories.json?main',
+          filter: function(list) {
+            return $.map(list, function(category) { return { id: category.id, name: category.name }; });
+          }
+        }
+      });
+      categories.initialize();
+
+      var TypeAhead = $('#wer').typeahead(null, {
+      name: 'categories',
+      displayKey: 'name',
+      highlight: true,
+      source: categories.ttAdapter()
+      });
+
+      TypeAhead.on('typeahead:opened', document, function(){
+        $('#_wer').val('')
+      })
+      TypeAhead.on('typeahead:autocompleted typeahead:selected', document, function(e, datum){
+        // $(this).data('id', datum.id)
+        $('#_wer').val(datum.id)
+      })
+
+      // typeahead
+/*      var businesses = new Bloodhound({
         datumTokenizer: function(d) { return Bloodhound.tokenizers.whitespace(d.name); },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         limit: 10,
@@ -919,7 +961,7 @@
       });
       businesses.initialize();
 
-      var TypeAhead = $('#navbar-form-search .typeahead').typeahead(null, {
+      var TypeAhead = $('#wer').typeahead(null, {
       name: 'businesses',
       displayKey: 'name',
       highlight: true,
@@ -935,15 +977,59 @@
             return out;
           }
         }
-      });
+      });*/
 
-      TypeAhead.on('typeahead:autocompleted', function(evt, data){
-        var jelem = $('#wo');
-        var lat = jelem.data('lat')
-        var lng = jelem.data('lng')
-        // console.log(jelem.data('lat'))
-        // console.log(data)
+      // connect categories bar with top navbar
+      $('.trigger-quickfind').on('click', document, function(event){ event.preventDefault(); 
+        var elem = $(this), name = elem.data('name').toLowerCase(), id = elem.data('id')
+        // trigger selected event for Typeahead
+        name = name.trim()
+        $('#_wer').val('')
+        $('#wer').val(name).trigger('typeahead:autocompleted', {id: id, name: name});
       })
+
+        // handle search submit
+       $('#navbar-form-search')
+       .find('button').on('click', document, function(){
+          // search for categories or by business names?
+          var action = 'categories/search'
+          if (! $('#_wer').val() && $('#wer').val()){
+            action = 'businesses/search'
+            $('#_wer').val($('#wer').val())
+          }
+          $('#navbar-form-search').attr('action', action).attr('method', 'post')
+          .submit()
+       })
+
+
+        // set user location by html5
+        function findLocation() {
+            navigator.geolocation.getCurrentPosition(callback);
+        }
+
+        function callback(position) {
+            if (position)
+                window.location.href = "/users/setLocation/" + position.coords.latitude + "/" + position.coords.longitude + "?r=" + encodeURIComponent(window.location.href);
+            else
+                alert('Fehler bei der Positionsermittlung');
+            
+        }
+
+        // extend map
+        var jDomMap = $('div[class~=extenssible]');
+var sel = jDomMap.get(0)
+sel.style.display='none';
+sel.offsetHeight; // no need to store this anywhere, the reference is enough
+sel.style.display='block';
+        $('div[class=le-map] a[class=map-extend]').data('small', true).click(function(e){
+            e.preventDefault()
+
+            var small = !!$(this).data('small')
+            small ? jDomMap.addClass('extend') :  jDomMap.removeClass('extend')
+            $(this).data('small', ! small) 
+        })
+
+      });
     </script>
 
 	</body>

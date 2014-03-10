@@ -1,11 +1,13 @@
 <?php namespace Giselle\Models;
 
-use \Phalcon\Mvc\Model;
+use 
+Phalcon\Mvc\Model,
+Phalcon\Mvc\Model\Query\Builder;
 
 class Businesses extends Model
 {
 	public
-	$id, $name;
+	$id, $name, $lat, $lng, $categories_id, $categories_parent_id;
 
 	public function initialize(){
 

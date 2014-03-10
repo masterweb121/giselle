@@ -7,6 +7,6 @@
 	</div>
 </div>
 
-{% include "partials/categories.volt" %}
+{{ this.categories_bar.carousel() }}
 
 {{ content() }}

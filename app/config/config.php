@@ -18,6 +18,8 @@ return new \Phalcon\Config(array(
                 'dbname'      => 'gis',
 	),
 
+	'api' => array('googlemaps' => 'AIzaSyARaSH5_69FXXGfgYIr0Wk9e3mG66h-sbQ'),
+
 	'application' => array(
 		'controllersDir' => PROJECT.'app/controllers/',
 		'vendorDir' 	 => PROJECT.'vendor/',
@@ -29,12 +31,14 @@ return new \Phalcon\Config(array(
 		'cacheDir'       => PROJECT.'app/cache/',
 		'testDir' 	 	 => PROJECT.'app/tests/',
 		'baseUri'        => '/',
-		'publicUrl'		 => 'giselle.dev',
+		'publicUrl'		 => '//giselle.dev',
         'securecookiedomain'   => '.giselle.dev',
 		'debug'          => true,
 		'cryptSalt'		 => '$9diko$.f#11',
 		'logFile'        => PROJECT.'logs/access.log'
 	),
+
+	'models' => array('limit' => 20),
 
 	'cache' => array(
 		'on'	=> false,

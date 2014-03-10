@@ -1,7 +1,6 @@
  <div class="row content">
 
     <div class="wrap breadcrumbs">
-      
       <ul class="col-sm-9 list-inline">
         <li><a href="#">Home</a> &raquo; </li>
         <li><a href="#">Kreuzberg</a> &raquo; </li>
@@ -26,27 +25,43 @@
         <div class="map-module extenssible">
           <div class="le-map">
             <a href="#" class="map-extend"><div>extend</div></a>
-            <div class="gmap stretch"></div>
+            <div id="map-canvas" class="gmap stretch"></div>
           </div>
         </div> <!-- map-module -->
       </div> <!-- /.fold -->
       
+<script type="text/javascript">
 
+      window.Mapy = window.Mapy || {};
+      // keep data for markers
+      Mapy.markers = [];
+      // center point for map
+      Mapy.gpoint = {{js_location | json_encode}};
+      // store data markers
+{% for business in page.items %}
+      Mapy.markers[{{business.id}}] = {{business | json_encode }};
+{% endfor %}
+
+</script>
 
       <div class="main">
         
         <div class="results clearfix">
           <div class="box">
-            {% include "partials/entry.volt" %}
-            {% include "partials/entry.volt" %}
+            {% for business in page.items %}
+              {% include "partials/entry.volt" %}
+            {% else %}
+              No results
+            {% endfor %}
             <ul class="pager">
-              <li><a href="#"><strong>&laquo; zurück</strong></a></li>
-              <li class="pg"><strong> 1 / 26 </strong></li>
-              <li><a href="#"><strong>vorwärts &raquo;</strong></a></li>
+              <li>{{link_to( this.config.application.publicUrl ~ router.getRewriteUri() ~ "?page=" ~ page.before, '&laquo; zurück') }}</li>>
+              <li class="pg"><strong> {{ page.current }}/{{ page.total_pages }} </strong></li>
+              <li>{{link_to( this.config.application.publicUrl ~ router.getRewriteUri() ~ "?page=" ~ page.next, 'vorwärts &raquo;')}}</li>
             </ul>
+
           </div><!-- .box -->
         </div> <!-- /.results -->
-
+           
       </div> <!-- .main -->
     </div> <!-- .flex-block -->
 

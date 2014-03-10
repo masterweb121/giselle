@@ -378,3 +378,140 @@ $BODY$
   COST 100;
 ALTER FUNCTION public.init_streets_cities(integer)
   OWNER TO postgres;
+
+update businesses set category_id = (select id from categories offset (select random()* count(*) from categories) limit 1)
+
+
+
+select b.id, b.name, sdc.streets_id, sdc.districts_id, sdc.districts_name, sdc.cities_id, sdc.cities_name 
+from businesses as b join
+(
+  -- streets of districts
+  select 
+  sd.streets_id, sd.districts_id, dc.districts_name, dc.cities_id, dc.cities_name
+  from streets_districts as sd 
+  join
+  --dc
+  ( -- districts of a city
+    select 
+    c.id as cities_id, 
+    c.name as cities_name, 
+    d.id as districts_id, 
+    d.name as districts_name 
+    from cities c join districts d on (c.id = d.cities_id) 
+    where c.id = 1271
+  ) as dc --dc
+  on (sd.districts_id = dc.districts_id) 
+) as sdc
+on(b.streets_id = sdc.streets_id)
+
+
+select count(f.id) as businesses_per_district, districts_id, districts_name from
+(
+-- businesses of streets
+select b.id, b.name, sdc.streets_id, sdc.districts_id, sdc.districts_name, sdc.cities_id, sdc.cities_name   
+from businesses as b join
+(
+  -- streets of districts
+  select 
+  sd.streets_id, sd.districts_id, dc.districts_name, dc.cities_id, dc.cities_name
+  from streets_districts as sd 
+  join
+  --dc
+  ( -- districts of a city
+    select 
+    c.id as cities_id, 
+    c.name as cities_name, 
+    d.id as districts_id, 
+    d.name as districts_name 
+    from cities c join districts d on (c.id = d.cities_id) 
+    where c.id = 1271
+  ) as dc --dc
+  on (sd.districts_id = dc.districts_id) 
+) as sdc
+on(b.streets_id = sdc.streets_id)
+) as f
+group by f.districts_id
+
+
+CREATE OR REPLACE FUNCTION public.update_business(iter_num integer)
+  RETURNS void AS
+$BODY$
+declare
+categories_id_val integer;
+r businesses%rowtype;
+begin 
+for r in select * from businesses where id < iter_num
+loop
+-- random from existent ids
+select id from categories offset (select random()* count(*) from categories) limit 1 into categories_id_val;
+if categories_id_val is null 
+then continue; 
+end if;
+update businesses set categories_id = categories_id_val where id = r.id;
+--RETURN NEXT r;
+end loop;
+return;
+end;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.update_business(integer)
+  OWNER TO postgres;
+
+
+CREATE OR REPLACE FUNCTION public.germanize_locations(iter_num integer)
+  RETURNS void AS
+$BODY$
+declare
+lat_val double precision;
+lng_val double precision;
+r businesses%rowtype;
+begin 
+for r in select * from businesses where id < iter_num
+loop
+-- random german points
+lat_val := 47 + random()*(55 - 47);
+lng_val := 5.8 + random()*(15 - 5.8);
+update businesses set lat = lat_val, lng = lng_val where id = r.id;
+--RETURN NEXT r;
+RAISE NOTICE '%, %',lat_val, lng_val;
+end loop;
+return;
+end;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.update_business(integer)
+  OWNER TO postgres
+
+
+--GEM
+-- select nth row from a grouped selection
+  select id, inx, cities_id from 
+(select s.id, sc.cities_id, 
+row_number() over(partition by s.id) as inx
+from streets s join streets_cities sc
+on s.id = sc.streets_id
+group by s.id, sc.cities_id) t
+where inx = 1
+-- generate randoms from interval
+SELECT * FROM generate_series(1270, 1280) order by random() limit 1
+
+-- categorised num businesses per city
+with datum as (select 
+count(b.id) num_buss, b.cities_id, b.categories_id,
+ b.categories_parent_id, c.name 
+from businesses b join categories c
+on c.id = b.categories_id
+where b.cities_id = $1/*in(select cities.id from cities where cities._main = true)*/ -- all cities returned by subquery
+group by b.cities_id, b.categories_id, b.categories_parent_id, c.name 
+)
+,resume as (
+select d.categories_id, d.num_buss, d.name from datum as d where d.categories_parent_id is null
+union  
+select p.categories_id, sum(c.num_buss), p.name from datum as p join datum as c
+on p.categories_id = c.categories_parent_id 
+group by p.categories_id, p.name
+)
+select r.categories_id, cast(sum(r.num_buss) as integer), r.name from resume r group by r.categories_id, r.name
